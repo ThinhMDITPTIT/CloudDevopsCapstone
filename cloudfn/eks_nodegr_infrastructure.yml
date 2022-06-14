@@ -36,7 +36,7 @@ Resources:
   NodeGrRoles:
     Type: "AWS::IAM::Role"
     Properties:
-      RoleName: !Sub ${EnvironmentName} Nodegroup Roles
+      RoleName: !Sub ${EnvironmentName}-Nodegroup-Roles
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -55,9 +55,9 @@ Resources:
   NodeGroup:
     Type: AWS::EKS::Nodegroup
     Properties:
-      ClusterName: !Sub ${EnvironmentName} Cluster
+      ClusterName: !Sub ${EnvironmentName}-Cluster
       NodeRole: !GetAtt NodeGrRoles.Arn
-      NodegroupName: !Sub ${EnvironmentName} NodeGr
+      NodegroupName: !Sub ${EnvironmentName}-NodeGr
       ScalingConfig:
         MinSize: !Ref MinSize
         MaxSize: !Ref MaxSize
@@ -72,10 +72,10 @@ Outputs:
     Description: Node Group instanc roles
     Value: !GetAtt NodeGrRoles.Arn
     Export:
-      Name: !Sub ${EnvironmentName} NodeGrRoles
+      Name: !Sub ${EnvironmentName}-NodeGrRoles
 
   NodeGroup:
     Description: EKS Node Group
     Value: !Ref NodeGroup
     Export:
-      Name: !Sub ${EnvironmentName} NodeGr
+      Name: !Sub ${EnvironmentName}-NodeGr

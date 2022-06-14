@@ -17,7 +17,7 @@ Resources:
   SecurityGrInstance:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub ${EnvironmentName} SecurityGRDirection
+      GroupName: !Sub ${EnvironmentName}-SecurityGRDirection
       GroupDescription: Direction allow port 22
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -34,6 +34,6 @@ Resources:
       ImageId: !Ref AMI
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} DirectionServe
+          Value: !Sub ${EnvironmentName}-DirectionServe
         - Key: Project
           Value: !Ref EnvironmentName

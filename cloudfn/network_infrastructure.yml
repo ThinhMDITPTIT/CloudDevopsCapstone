@@ -64,7 +64,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags: 
         - Key: Name 
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+          Value: !Sub ${EnvironmentName}-Public-Subnet-AZ1
         - Key: kubernetes.io/role/elb
           Value: 1
 
@@ -77,7 +77,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags: 
         - Key: Name 
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+          Value: !Sub ${EnvironmentName}-Public-Subnet-AZ2
         - Key: kubernetes.io/role/elb
           Value: 1
 
@@ -111,9 +111,9 @@ Resources:
       VpcId: !Ref VPC
       Tags: 
         - Key: Name 
-          Value: !Sub ${EnvironmentName} Public Routes
+          Value: !Sub ${EnvironmentName}-Public-Routes
         - Key: Network
-          Value: !Sub ${EnvironmentName} Public
+          Value: !Sub ${EnvironmentName}-Public
 
   DefaultPublicRoute: 
     Type: AWS::EC2::Route

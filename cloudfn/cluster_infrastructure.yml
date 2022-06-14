@@ -30,7 +30,7 @@ Resources:
   ClusterProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: !Sub ${EnvironmentName} ClusterProfile
+      InstanceProfileName: !Sub ${EnvironmentName}-ClusterProfile
       Path: "/"
       Roles:
         - !Ref EKSRoles
@@ -39,7 +39,7 @@ Resources:
     Type: AWS::EKS::Cluster
     Properties:
       Version: "1.19"
-      Name: !Sub ${EnvironmentName} CapstoneCluster
+      Name: !Sub ${EnvironmentName}-CapstoneCluster
       RoleArn: !GetAtt EKSRoles.Arn
       ResourcesVpcConfig:
         SecurityGroupIds: 
@@ -54,10 +54,10 @@ Outputs:
     Description: EKS Identify
     Value: !Ref CapstoneCluster
     Export:
-      Name: !Sub ${EnvironmentName} EKSCluster
+      Name: !Sub ${EnvironmentName}-EKSCluster
 
   EKSRoleArn:
     Description: AWS resources accessibility and create
     Value: !GetAtt EKSRoles.Arn
     Export:
-      Name: !Sub ${EnvironmentName} EKSRoles
+      Name: !Sub ${EnvironmentName}-EKSRoles
