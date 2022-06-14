@@ -5,7 +5,7 @@
 	},
 	{
 		"ParameterKey": "SSHKey",
-		"ParameterValue": "tonytmd"
+		"ParameterValue": "clouddevops"
 	},
 	{
 		"ParameterKey": "AMI",
