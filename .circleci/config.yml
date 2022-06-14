@@ -44,12 +44,15 @@ jobs:
 
   docker-upload:
     docker:
-    # Use the same Docker base as the project
-      - image: python:3.7.3-stretch
+      # Use the Image that have Docker installed
+      - image: circleci/golang:1.15
 
     working_directory: ~/repo
     steps:
       - checkout
+
+      - setup_remote_docker:
+          version: 19.03.13
 
       - run:
           name: Docker build
