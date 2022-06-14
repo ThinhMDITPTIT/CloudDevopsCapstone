@@ -42,7 +42,7 @@ Resources:
       Name: !Sub ${EnvironmentName} CapstoneCluster
       RoleArn: !GetAtt EKSRoles.Arn
       ResourcesVpcConfig:
-        SecurityGroupIds: !ImportValue !Sub ${EnvironmentName} SecurityGR
+        SecurityGroupIds: !ImportValue !Sub ${EnvironmentName}-SecurityGR
         SubnetIds: !Split [",", !ImportValue !Sub ${EnvironmentName}-PUB-NETS] 
 
 Outputs:
