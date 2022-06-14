@@ -44,7 +44,7 @@ Resources:
       ResourcesVpcConfig:
         SecurityGroupIds: 
           - Fn::ImportValue: !Sub ${EnvironmentName}-SecurityGR
-        SubnetIds: !Split [",", !ImportValue !Sub ${EnvironmentName}-PUB-NETS] 
+        SubnetIds: !Split [",", Fn::ImportValue: !Sub ${EnvironmentName}-PUB-NETS] 
 
 Outputs:
   EksID:
