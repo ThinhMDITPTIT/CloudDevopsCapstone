@@ -62,7 +62,10 @@ Resources:
         MinSize: !Ref MinSize
         MaxSize: !Ref MaxSize
         DesiredSize: !Ref DesiredSize
-      Subnets: !Split [",", Fn::ImportValue: !Sub ${EnvironmentName}-PUB-NETS] 
+      Subnets: 
+        Fn::Split: 
+          - ","
+          - Fn::ImportValue: !Sub ${EnvironmentName}-PUB-NETS
 
 Outputs:
   NodeGrRoles:
