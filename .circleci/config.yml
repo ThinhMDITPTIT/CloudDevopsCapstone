@@ -101,7 +101,7 @@ jobs:
               --capabilities CAPABILITY_NAMED_IAM
           no_output_timeout: 15m
       - run:
-          name: Ensure nodegr
+          name: Nodegr
           command: |
             aws cloudformation deploy \
               --template-file cloudfn/eks_nodegr_infrastructure.yml \
@@ -111,7 +111,7 @@ jobs:
               --parameter-overrides file://cloudfn/eks_nodegr_parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
       - run:
-          name: Ensure direction
+          name: Direction
           command: |
             aws cloudformation deploy \
               --template-file cloudfn/direction_infrastructure.yml \
