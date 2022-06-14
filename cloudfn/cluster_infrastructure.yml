@@ -39,7 +39,7 @@ Resources:
     Type: AWS::EKS::Cluster
     Properties:
       Version: "1.19"
-      Name: !Sub ${EnvironmentName}-CapstoneCluster
+      Name: !Sub ${EnvironmentName}-Cluster
       RoleArn: !GetAtt EKSRoles.Arn
       ResourcesVpcConfig:
         SecurityGroupIds: 
