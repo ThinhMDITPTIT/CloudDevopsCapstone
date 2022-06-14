@@ -1,0 +1,19 @@
+- name: "Store LB DNS to local"
+  hosts: management[0]
+  user: ubuntu
+  gather_facts: false
+  become: yes
+  vars:
+    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+  tasks:
+    - name: LB DNS
+      shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
+      register: elb_dns
+      args:
+        chdir: $HOME
+
+    - name: Store to local
+      copy:
+        content: "{{ elb_dns.stdout }}"
+        dest: "~/elb_dns.txt"
+      delegate_to: localhost

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clouddevops-deployment
+  labels:
+    app: clouddevops-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: clouddevops-app
+  template:
+    metadata:
+      labels:
+        app: clouddevops-app
+    spec:
+      containers:
+        - name: clouddevops-app
+          image: dockertonymd/clouddevops
+          ports:
+            - containerPort: 80

@@ -1,0 +1,10 @@
+- name: "EKS configuration"
+  hosts: management[0]
+  user: ubuntu
+  gather_facts: false
+  become: yes
+  vars:
+    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+  roles:
+    - clouddevops-deployment
+    - clouddevops-services

@@ -40,4 +40,219 @@ jobs:
           name: run lint
           command: |
             . venv/bin/activate
-            make lint           
+            make lint 
+
+  docker-upload:
+    docker:
+    # Use the same Docker base as the project
+      - image: python:3.7.3-stretch
+
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      - run:
+          name: Docker build
+          command: |
+            # Build with tag
+            docker build --tag=$DOCKER_IMAGE_NAME .
+            # List image
+            docker image ls
+
+      - run:
+          name: Dockerhub upload
+          command: |
+            echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
+            docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
+            docker tag $DOCKER_IMAGE_NAME $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
+            docker push $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
+
+  deployment-infra:
+    docker:
+      - image: amazon/aws-cli
+
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install lib
+          command: yum install -y tar gzip
+      - run:
+          name: EKS network
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudfn/network_infrastructure.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-network-eks" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudfn/network_parameters.json
+      - run:
+          name: EKS cluster
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudfn/cluster_infrastructure.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-cluster-eks" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudfn/cluster_parameters.json \
+              --capabilities CAPABILITY_NAMED_IAM
+          no_output_timeout: 15m
+      - run:
+          name: Ensure nodegr
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudfn/eks_nodegr_infrastructure.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-nodegr-eks" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudfn/eks_nodegr_parameters.json \
+              --capabilities CAPABILITY_NAMED_IAM
+      - run:
+          name: Ensure direction
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudfn/direction_infrastructure.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-direction-eks" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudfn/direction_parameters.json \
+              --output text >> ~/deployment.txt
+            cat ~/deployment.txt
+      - run:
+          name: Extract direction public Ip Address
+          command: |
+            echo [direction] > ~/inventory.txt
+            aws ec2 describe-instances \
+              --region "${AWS_DEFAULT_REGION}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-direction*" \
+              --output text >> ~/inventory.txt
+            cat ~/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - inventory.txt
+            - deployment.txt
+
+  configure-infra:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [ "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e" ]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install lib
+          command: |
+            apk add --update ansible
+      - run:
+          name: Server configuration
+          command: |
+            if grep -q "No changes to deploy" ~/deployment.txt
+              then
+                cat ~/inventory.txt
+                echo "Direction instances configured"
+              else
+                cat ~/inventory.txt
+                cd ansible
+                ansible-playbook -i ~/inventory.txt server_cf.yml
+              fi
+
+  cluster-configure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [ "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e" ]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install lib
+          command: |
+            apk add --update ansible
+      - run:
+          name: Server configuration
+          command: |
+            if grep -q "No changes to deploy" ~/deployment.txt
+              then
+                cat ~/inventory.txt
+                echo "Direction instances configured"
+              else
+                cat ~/inventory.txt
+                cd ansible
+                ansible-playbook -i ~/inventory.txt cluster_cf.yml
+              fi
+      - run:
+          name: LB domain
+          command: |
+            if grep -q "No changes to deploy" ~/deployment.txt
+              then
+                cat ~/inventory.txt
+                echo "Direction instances configured."
+              else
+                cat ~/inventory.txt
+                echo "Wait 60 seconds..."
+                sleep 60
+              fi
+      - run:
+          name: LB DNS
+          command: |
+            cat ~/inventory.txt
+            cd ansible
+            ansible-playbook -i ~/inventory.txt dns_lb_store.yml
+            cat ~/dns_lb.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - dns_lb.txt
+
+  docker-deployment:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [ "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e" ]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install lib
+          command: |
+            apk add --update ansible
+      - run:
+          name: Docker image deploy
+          command: |
+            cat ~/inventory.txt
+            cd ansible
+            ansible-playbook -i ~/inventory.txt app_dep.yml
+          no_output_timeout: 2m
+
+workflows:
+  my_workflow:
+    jobs:
+      - build
+      - docker-upload:
+          requires:
+            - build
+          filters:
+            branches:
+              only: [ main ]
+      - deployment-infra:
+          filters:
+            branches:
+              only: [ main ]
+      - configure-infra:
+          requires:
+            - deployment-infra
+      - cluster-configure:
+          requires:
+            - docker-upload
+            - configure-infra
+      - docker-deployment:
+          requires:
+            - cluster-configure
+      
+

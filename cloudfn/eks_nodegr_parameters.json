@@ -1,0 +1,22 @@
+[
+	{
+		"ParameterKey": "EnvironmentName",
+		"ParameterValue": "clouddevops"
+	},
+	{
+		"ParameterKey": "MinSize",
+		"ParameterValue": "2"
+	},
+	{
+		"ParameterKey": "MaxSize",
+		"ParameterValue": "6"
+	},
+	{
+		"ParameterKey": "DesiredSize",
+		"ParameterValue": "4"
+	},
+	{
+		"ParameterKey": "KeyPair",
+		"ParameterValue": "clouddevops"
+	}
+]
