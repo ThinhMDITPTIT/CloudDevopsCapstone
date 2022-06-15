@@ -6,5 +6,5 @@
   vars:
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   roles:
-    - clouddevops-deployment
-    - clouddevops-services
+    - deployment
+    - services
