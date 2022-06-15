@@ -1,5 +1,5 @@
 - name: "PyApp Deployment"
-  hosts: management[0]
+  hosts: all
   user: ubuntu
   gather_facts: false
   become: yes

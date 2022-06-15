@@ -1,5 +1,6 @@
+---
 - name: "Project lib"
-  hosts: management
+  hosts: all
   user: ubuntu
   gather_facts: false
   become: yes
@@ -14,7 +15,7 @@
     - kubernetes
 
 - name: "AWS CLI Authentication"
-  hosts: management
+  hosts: all
   user: ubuntu
   gather_facts: false
   become: yes
@@ -31,7 +32,7 @@
       shell: "aws configure set default.region {{ AWS_DEFAULT_REGION }}"
 
 - name: "Kubectl configuration"
-  hosts: management
+  hosts: all
   user: ubuntu
   gather_facts: false
   become: yes

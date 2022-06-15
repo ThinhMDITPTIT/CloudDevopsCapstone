@@ -1,5 +1,6 @@
+---
 - name: "Store LB DNS to local"
-  hosts: management[0]
+  hosts: all
   user: ubuntu
   gather_facts: false
   become: yes
@@ -9,6 +10,7 @@
     - name: LB DNS
       shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
       register: elb_dns
+      changed_when: false
       args:
         chdir: $HOME
 
