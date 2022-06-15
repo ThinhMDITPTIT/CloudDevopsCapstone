@@ -7,13 +7,13 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   tasks:
     - name: LB DNS
-      shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-services.yml"
-      register: dns_lb
+      shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-services"
+      register: elb_dns
       args:
         chdir: $HOME
 
-    - name: Store to local
+    - name: Print to local file
       copy:
-        content: "{{ dns_lb.stdout }}"
-        dest: "~/dns_lb.txt"
+        content: "{{ elb_dns.stdout }}"
+        path: "~/elb_dns.txt"
       delegate_to: localhost
