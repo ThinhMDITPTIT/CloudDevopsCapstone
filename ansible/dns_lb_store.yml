@@ -7,7 +7,7 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   tasks:
     - name: LB DNS
-      shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-services"
+      shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-services.yml"
       register: dns_lb
       args:
         chdir: $HOME
