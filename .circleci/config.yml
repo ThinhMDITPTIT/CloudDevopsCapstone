@@ -116,7 +116,7 @@ jobs:
             aws cloudformation deploy \
               --template-file cloudfn/direction_infrastructure.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-management-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-direction-eks" \
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudfn/direction_parameters.json \
               --output text >> ~/deployment.txt
