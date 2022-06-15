@@ -20,5 +20,5 @@
     - name: Print to local file
       copy:
         content: "{{ elb_dns.stdout }}"
-        dest: "~/elb_dns.txt"
+        dest: "~/elbdns.txt"
       delegate_to: localhost
