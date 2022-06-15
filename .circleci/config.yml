@@ -200,17 +200,17 @@ jobs:
                 echo "Wait 60 seconds..."
                 sleep 60
               fi
-      - run:
-          name: LB DNS
-          command: |
-            cat ~/inventory.txt
-            cd ansible
-            ansible-playbook -i ~/inventory.txt dns_lb_store.yml
-            cat ~/elb_dns.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - elb_dns.txt
+      # - run:
+      #     name: LB DNS
+      #     command: |
+      #       cat ~/inventory.txt
+      #       cd ansible
+      #       ansible-playbook -i ~/inventory.txt dns_lb_store.yml
+      #       cat ~/elb_dns.txt
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - elb_dns.txt
 
   docker-deployment:
     docker:
