@@ -206,11 +206,11 @@ jobs:
             cat ~/inventory.txt
             cd ansible
             ansible-playbook -i ~/inventory.txt dns_lb_store.yml
-            cat ~/dns_lb.txt
+            cat ~/elb_dns.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - dns_lb.txt
+            - elb_dns.txt
 
   docker-deployment:
     docker:
