@@ -11,10 +11,6 @@
       register: elb_dns
       args:
         chdir: $HOME
-    
-    - name: Print out the information
-      debug:
-        msg: "{{ elb_dns.stdout }}"
 
     - name: Print to local file
       copy:
