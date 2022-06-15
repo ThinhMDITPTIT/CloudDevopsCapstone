@@ -8,12 +8,12 @@
   tasks:
     - name: LB DNS
       shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
-      register: elb_dns
+      register: dns_lb
       args:
         chdir: $HOME
 
     - name: Store to local
       copy:
-        content: "{{ elb_dns.stdout }}"
-        dest: "~/elb_dns.txt"
+        content: "{{ dns_lb.stdout }}"
+        dest: "~/dns_lb.txt"
       delegate_to: localhost

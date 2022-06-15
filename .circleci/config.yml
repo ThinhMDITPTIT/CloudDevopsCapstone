@@ -124,7 +124,7 @@ jobs:
       - run:
           name: Extract direction public Ip Address
           command: |
-            echo [direction] > ~/inventory.txt
+            echo [management] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
