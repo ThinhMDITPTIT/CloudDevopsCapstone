@@ -111,24 +111,24 @@ jobs:
               --parameter-overrides file://cloudfn/eks_nodegr_parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
       - run:
-          name: Direction
+          name: Management
           command: |
             aws cloudformation deploy \
               --template-file cloudfn/direction_infrastructure.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-direction-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-management-eks" \
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudfn/direction_parameters.json \
               --output text >> ~/deployment.txt
             cat ~/deployment.txt
       - run:
-          name: Extract direction public Ip Address
+          name: Extract management public Ip Address
           command: |
             echo [management] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-direction*" \
+              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:
@@ -200,17 +200,17 @@ jobs:
                 echo "Wait 60 seconds..."
                 sleep 60
               fi
-      # - run:
-      #     name: LB DNS
-      #     command: |
-      #       cat ~/inventory.txt
-      #       cd ansible
-      #       ansible-playbook -i ~/inventory.txt dns_lb_store.yml
-      #       cat ~/elb_dns.txt
-      # - persist_to_workspace:
-      #     root: ~/
-      #     paths:
-      #       - elb_dns.txt
+      - run:
+          name: LB DNS
+          command: |
+            cat ~/inventory.txt
+            cd ansible
+            ansible-playbook -i ~/inventory.txt dns_lb_store.yml
+            cat ~/elb_dns.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - elb_dns.txt
 
   docker-deployment:
     docker:

@@ -9,11 +9,16 @@
     - name: LB DNS
       shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-services"
       register: elb_dns
+      changed_when: false
       args:
         chdir: $HOME
+    
+    - name: Print out the information
+      debug:
+        msg: "{{ elb_dns.stdout }}"
 
     - name: Print to local file
       copy:
         content: "{{ elb_dns.stdout }}"
-        path: "~/elb_dns.txt"
+        dest: "~/elb_dns.txt"
       delegate_to: localhost
