@@ -1,9 +1,9 @@
 - name: Services configuration trans
   copy:
-    src: "{{ ENVIRONMENT_NAME }}-services.yaml"
+    src: "{{ ENVIRONMENT_NAME }}-service.yaml"
     dest: $HOME
 
 - name: Services configure creation
-  command: "./bin/kubectl apply -f {{ ENVIRONMENT_NAME }}-services.yaml"
+  command: "./bin/kubectl apply -f {{ ENVIRONMENT_NAME }}-service.yaml"
   args:
     chdir: $HOME

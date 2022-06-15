@@ -7,4 +7,4 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   roles:
     - deployment
-    - services
+    - service

@@ -36,6 +36,6 @@ Resources:
       ImageId: !Ref AMI
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName}-DirectionServe
+          Value: !Sub ${EnvironmentName}-directionServe
         - Key: Project
           Value: !Ref EnvironmentName
