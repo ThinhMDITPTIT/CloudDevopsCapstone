@@ -117,8 +117,8 @@ jobs:
               --stack-name "${ENVIRONMENT_NAME}-eks-management" \
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudformation/management-parameters.json \
-              --output text >> ~/checkIfDeployed.txt
-            cat ~/checkIfDeployed.txt
+              --output text >> ~/deployment.txt
+            cat ~/deployment.txt
       - run:
           name: Extract the IPs of the management instances for Ansible
           command: |
@@ -133,7 +133,7 @@ jobs:
           root: ~/
           paths:
             - inventory.txt
-            - checkIfDeployed.txt
+            - deployment.txt
 
   configure-infrastructure:
     docker:
@@ -142,7 +142,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e"
+            - "37:51:2b:db:17:c9:ef:9d:aa:39:1a:42:5c:8a:2c:9f"
       - attach_workspace:
           at: ~/
       - run:
@@ -152,7 +152,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+            if grep -q "No changes to deploy" ~/deployment.txt
               then
                 cat ~/inventory.txt
                 echo "Our management instances are already configured."
@@ -169,7 +169,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e"
+            - "37:51:2b:db:17:c9:ef:9d:aa:39:1a:42:5c:8a:2c:9f"
       - attach_workspace:
           at: ~/
       - run:
@@ -179,7 +179,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+            if grep -q "No changes to deploy" ~/deployment.txt
               then
                 cat ~/inventory.txt
                 echo "Our management instances are already configured."
@@ -191,7 +191,7 @@ jobs:
       - run:
           name: Wait for LoadBalancer's domain to become reachable
           command: |
-            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+            if grep -q "No changes to deploy" ~/deployment.txt
               then
                 cat ~/inventory.txt
                 echo "Our management instances are already configured."
@@ -219,7 +219,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e"
+            - "37:51:2b:db:17:c9:ef:9d:aa:39:1a:42:5c:8a:2c:9f"
       - attach_workspace:
           at: ~/
       - run:
