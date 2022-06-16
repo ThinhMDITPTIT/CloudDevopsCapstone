@@ -1,0 +1,41 @@
+Description: >
+  CAPSTONE - ThinhMD (TonyTMD)
+  AWS EKS Cluster Direction infrastructure
+
+Parameters:
+  EnvironmentName:
+    Description: Prefixed Env resource names
+    Type: String
+  SSHKey:
+    Description: SSH key
+    Type: String
+  AMI:
+    Description: Application and OS Images
+    Type: String
+
+Resources:
+  SecurityGrInstance:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-SecurityGRDirection
+      GroupDescription: Direction allow port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  DirectionServe:
+    Type: AWS::EC2::Instance
+    Properties:
+      # InstanceType: t2.micro
+      InstanceType: t3.medium
+      SecurityGroups: 
+        - Ref: SecurityGrInstance
+      KeyName: !Ref SSHKey
+      ImageId: !Ref AMI
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-directionServe
+        - Key: Project
+          Value: !Ref EnvironmentName

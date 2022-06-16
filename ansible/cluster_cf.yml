@@ -1,5 +1,5 @@
 ---
-- name: "Configure the EKS cluster with kubectl"
+- name: "EKS configuration"
   hosts: management[0]
   user: ubuntu
   gather_facts: false
@@ -7,5 +7,5 @@
   vars:
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   roles:
-    - capstone-deployment
-    - capstone-service
+    - deployment
+    - service

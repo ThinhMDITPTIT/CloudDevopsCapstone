@@ -16,7 +16,7 @@
 		"ParameterValue": "2"
 	},
 	{
-		"ParameterKey": "KeyPairName",
+		"ParameterKey": "KeyPair",
 		"ParameterValue": "clouddevops"
 	}
 ]

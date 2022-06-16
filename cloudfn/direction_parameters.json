@@ -4,11 +4,11 @@
 		"ParameterValue": "clouddevops"
 	},
 	{
-		"ParameterKey": "SSHKeyName",
+		"ParameterKey": "SSHKey",
 		"ParameterValue": "clouddevops"
 	},
 	{
-		"ParameterKey": "amiImageId",
+		"ParameterKey": "AMI",
 		"ParameterValue": "ami-08d4ac5b634553e16"
 	}
 ]
