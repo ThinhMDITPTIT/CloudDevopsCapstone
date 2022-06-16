@@ -7,7 +7,7 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
     CIRCLE_WORKFLOW_ID: "{{ lookup('env', 'CIRCLE_WORKFLOW_ID') }}"
   roles:
-    - awscli
+    # - awscli
     - kubernetes
   tasks:
     - name: Update latest image deployment
