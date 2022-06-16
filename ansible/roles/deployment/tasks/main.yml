@@ -1,5 +1,5 @@
 - name: Deployment configuration trans
-  copy:
+  template:
     src: "{{ ENVIRONMENT_NAME }}-deployment.yaml"
     dest: $HOME
 

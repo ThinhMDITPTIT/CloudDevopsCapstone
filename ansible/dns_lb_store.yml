@@ -13,7 +13,7 @@
         state: latest
         update_cache: yes
   roles:
-    - awscli
+    # - awscli
     - kubernetes
   tasks:
     - name: LB DNS

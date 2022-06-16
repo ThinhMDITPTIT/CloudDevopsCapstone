@@ -1,5 +1,5 @@
 - name: Services configuration trans
-  copy:
+  template:
     src: "{{ ENVIRONMENT_NAME }}-service.yaml"
     dest: $HOME
 
