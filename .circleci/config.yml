@@ -151,15 +151,18 @@ jobs:
       - run:
           name: Server configuration
           command: |
-            if grep -q "No changes to deploy" ~/deployment.txt
-              then
-                cat ~/inventory.txt
-                echo "Direction instances configured"
-              else
-                cat ~/inventory.txt
+            cat ~/inventory.txt
                 cd ansible
                 ansible-playbook -i ~/inventory.txt server_cf.yml
-              fi
+            # if grep -q "No changes to deploy" ~/deployment.txt
+            #   then
+            #     cat ~/inventory.txt
+            #     echo "Direction instances configured"
+            #   else
+            #     cat ~/inventory.txt
+            #     cd ansible
+            #     ansible-playbook -i ~/inventory.txt server_cf.yml
+            #   fi
 
   cluster-configure:
     docker:
