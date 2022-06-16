@@ -6,6 +6,9 @@
   become: yes
   vars:
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+  roles:
+    - awscli
+    - kubernetes
   tasks:
     - name: LB DNS
       shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
