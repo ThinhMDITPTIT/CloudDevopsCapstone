@@ -17,7 +17,7 @@
     - kubernetes
   tasks:
     - name: LB DNS
-      shell: "./bin/kubectl get svc --all"
+      shell: "./bin/kubectl get svc --all-namespaces"
       # shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
       register: elb_dns
       changed_when: false
