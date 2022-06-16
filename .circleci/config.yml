@@ -83,7 +83,7 @@ jobs:
             aws cloudformation deploy \
               --template-file cloudfn/network_infrastructure.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-network-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-network" \
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudfn/network_parameters.json
       - run:
@@ -92,7 +92,7 @@ jobs:
             aws cloudformation deploy \
               --template-file cloudfn/cluster_infrastructure.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-cluster-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-cluster" \
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudfn/cluster_parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
@@ -103,7 +103,7 @@ jobs:
             aws cloudformation deploy \
               --template-file cloudfn/eks_nodegr_infrastructure.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-nodegr-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-nodegr" \
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudfn/eks_nodegr_parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
@@ -113,7 +113,7 @@ jobs:
             aws cloudformation deploy \
               --template-file cloudfn/direction_infrastructure.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-direction-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-direction" \
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudfn/direction_parameters.json \
               --output text >> ~/deployment.txt

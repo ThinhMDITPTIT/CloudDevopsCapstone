@@ -6,6 +6,12 @@
   become: yes
   vars:
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+  pre_tasks:
+    - name: "Install 'unzip'"
+      apt:
+        name: [ "unzip" ]
+        state: latest
+        update_cache: yes
   roles:
     - awscli
     - kubernetes
