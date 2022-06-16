@@ -31,6 +31,13 @@ jobs:
             # Install hadolint
             wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64
             chmod +x /bin/hadolint
+            # Install kubectl
+            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
+            openssl sha1 -sha256 kubectl
+            chmod +x ./kubectl
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
 
       # run lint
       - run:
@@ -150,6 +157,13 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            # Install kubectl
+            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
+            openssl sha1 -sha256 kubectl
+            chmod +x ./kubectl
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - run:
           name: Configure server
           command: |
@@ -177,6 +191,13 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            # Install kubectl
+            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
+            openssl sha1 -sha256 kubectl
+            chmod +x ./kubectl
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - run:
           name: Configure server
           command: |
@@ -227,6 +248,13 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            # Install kubectl
+            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
+            openssl sha1 -sha256 kubectl
+            chmod +x ./kubectl
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - run:
           name: Deploy newest Docker Image
           command: |
