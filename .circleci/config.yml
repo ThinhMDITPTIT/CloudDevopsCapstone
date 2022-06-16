@@ -148,7 +148,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7.3-stretch
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
@@ -160,16 +160,16 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            # Install kubectl
-            apt update -y
-            apt upgrade -y
-            apt install curl
-            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
-            curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
-            openssl sha1 -sha256 kubectl
-            chmod +x ./kubectl
-            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+            # # Install kubectl
+            # apt update -y
+            # apt upgrade -y
+            # apt install curl
+            # curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            # curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
+            # openssl sha1 -sha256 kubectl
+            # chmod +x ./kubectl
+            # mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            # echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - run:
           name: Configure server
           command: |
@@ -185,7 +185,7 @@ jobs:
 
   configure-cluster:
     docker:
-      - image: python:3.7.3-stretch
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
@@ -197,16 +197,16 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            # Install kubectl
-            apt update -y
-            apt upgrade -y
-            apt install curl
-            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
-            curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
-            openssl sha1 -sha256 kubectl
-            chmod +x ./kubectl
-            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+            # # Install kubectl
+            # apt update -y
+            # apt upgrade -y
+            # apt install curl
+            # curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            # curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
+            # openssl sha1 -sha256 kubectl
+            # chmod +x ./kubectl
+            # mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            # echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - run:
           name: Configure server
           command: |
@@ -245,7 +245,7 @@ jobs:
 
   deploy-docker:
     docker:
-      - image: python:3.7.3-stretch
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
@@ -257,16 +257,16 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            # Install kubectl
-            apt update -y
-            apt upgrade -y
-            apt install curl
-            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
-            curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
-            openssl sha1 -sha256 kubectl
-            chmod +x ./kubectl
-            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+            # # Install kubectl
+            # apt update -y
+            # apt upgrade -y
+            # apt install curl
+            # curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            # curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
+            # openssl sha1 -sha256 kubectl
+            # chmod +x ./kubectl
+            # mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            # echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - run:
           name: Deploy newest Docker Image
           command: |
