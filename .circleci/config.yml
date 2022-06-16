@@ -1,51 +1,45 @@
-# CircleCI 2.1 configuration file
-#
-# Check https://circleci.com/docs/2.1/language-python/ for more details
-#
 version: 2.1
+
 jobs:
-  build:
+  test-build:
     docker:
-    # Use the same Docker base as the project
       - image: python:3.7.3-stretch
 
     steps:
       - checkout
 
-      # Download and cache dependencies
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
+      # run build
       - run:
           name: install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
             make install
-            # Install hadolint
-            wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64
-            chmod +x /bin/hadolint
+
+      # run lint
+      - run:
+          name: run lint
+          command: |
+            . venv/bin/activate
+            make lint
+
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
-      # run lint!
-      - run:
-          name: run lint
-          command: |
-            . venv/bin/activate
-            make lint 
-
-  docker-upload:
+  upload-docker:
     docker:
-      # Use the Image that have Docker installed
       - image: circleci/golang:1.15
 
     working_directory: ~/repo
+
     steps:
       - checkout
 
@@ -53,209 +47,204 @@ jobs:
           version: 19.03.13
 
       - run:
-          name: Docker build
+          name: Build docker container
           command: |
-            # Build with tag
             docker build --tag=$DOCKER_IMAGE_NAME .
-            # List image
             docker image ls
 
       - run:
-          name: Dockerhub upload
+          name: Upload Docker to Dockerhub
           command: |
             echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
             docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
             docker tag $DOCKER_IMAGE_NAME $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:$CIRCLE_WORKFLOW_ID
             docker push $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:$CIRCLE_WORKFLOW_ID
 
-  deployment-infra:
+  deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
-
     steps:
       - checkout
       - run:
-          name: Install lib
+          name: Install dependencies
           command: yum install -y tar gzip
       - run:
-          name: EKS network
+          name: Ensure EKS network exists
           command: |
             aws cloudformation deploy \
-              --template-file cloudfn/network_infrastructure.yml \
+              --template-file cloudformation/network.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-network-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-eks-network" \
               --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudfn/network_parameters.json
+              --parameter-overrides file://cloudformation/network-parameters.json
       - run:
-          name: EKS cluster
+          name: Ensure EKS Cluster exists
           command: |
             aws cloudformation deploy \
-              --template-file cloudfn/cluster_infrastructure.yml \
+              --template-file cloudformation/cluster.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-cluster-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-eks-cluster" \
               --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudfn/cluster_parameters.json \
+              --parameter-overrides file://cloudformation/cluster-parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
           no_output_timeout: 15m
       - run:
-          name: Nodegr
+          name: Ensure Nodegroup exists
           command: |
             aws cloudformation deploy \
-              --template-file cloudfn/eks_nodegr_infrastructure.yml \
+              --template-file cloudformation/nodegroup.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-nodegr-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-eks-nodegroup" \
               --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudfn/eks_nodegr_parameters.json \
+              --parameter-overrides file://cloudformation/nodegroup-parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
       - run:
-          name: Management
+          name: Ensure management instances exists
           command: |
             aws cloudformation deploy \
-              --template-file cloudfn/direction_infrastructure.yml \
+              --template-file cloudformation/management.yml \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --stack-name "${ENVIRONMENT_NAME}-direction-eks" \
+              --stack-name "${ENVIRONMENT_NAME}-eks-management" \
               --region ${AWS_DEFAULT_REGION} \
-              --parameter-overrides file://cloudfn/direction_parameters.json \
-              --output text >> ~/deployment.txt
-            cat ~/deployment.txt
+              --parameter-overrides file://cloudformation/management-parameters.json \
+              --output text >> ~/checkIfDeployed.txt
+            cat ~/checkIfDeployed.txt
       - run:
-          name: Extract management public Ip Address
+          name: Extract the IPs of the management instances for Ansible
           command: |
             echo [management] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-direction*" \
+              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - inventory.txt
-            - deployment.txt
+            - checkIfDeployed.txt
 
-  configure-infra:
+  configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: 
-            - "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e"
+          fingerprints:
+            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
       - attach_workspace:
           at: ~/
       - run:
-          name: Install lib
+          name: Install dependencies
           command: |
             apk add --update ansible
       - run:
-          name: Server configuration
+          name: Configure server
           command: |
-            if grep -q "No changes to deploy" ~/deployment.txt
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
               then
                 cat ~/inventory.txt
-                echo "Direction instances configured"
+                echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
                 cd ansible
-                ansible-playbook -i ~/inventory.txt server_cf.yml
+                ansible-playbook -i ~/inventory.txt configure-server.yml
               fi
 
-  cluster-configure:
+  configure-cluster:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: 
-            - "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e"
+          fingerprints:
+            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
       - attach_workspace:
           at: ~/
       - run:
-          name: Install lib
+          name: Install dependencies
           command: |
             apk add --update ansible
       - run:
-          name: Server configuration
+          name: Configure server
           command: |
-            if grep -q "No changes to deploy" ~/deployment.txt
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
               then
                 cat ~/inventory.txt
-                echo "Direction instances configured"
+                echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
                 cd ansible
-                ansible-playbook -i ~/inventory.txt cluster_cf.yml
+                ansible-playbook -i ~/inventory.txt configure-cluster.yml
               fi
       - run:
-          name: LB domain
+          name: Wait for LoadBalancer's domain to become reachable
           command: |
-            if grep -q "No changes to deploy" ~/deployment.txt
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
               then
                 cat ~/inventory.txt
-                echo "Direction instances configured."
+                echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
                 echo "Wait 60 seconds..."
                 sleep 60
               fi
       - run:
-          name: LB DNS
+          name: Display the LoadBalancer's DNS name
           command: |
             cat ~/inventory.txt
             cd ansible
-            ansible-playbook -i ~/inventory.txt dns_lb_store.yml
+            ansible-playbook -i ~/inventory.txt save-elb-dns.yml
             cat ~/elb_dns.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - elb_dns.txt
 
-  docker-deployment:
+  deploy-docker:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: 
-            - "dc:f2:6a:82:c2:43:37:16:3e:75:61:94:ad:42:dd:a4:85:ea:af:0e"
+          fingerprints:
+            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
       - attach_workspace:
           at: ~/
       - run:
-          name: Install lib
+          name: Install dependencies
           command: |
             apk add --update ansible
       - run:
-          name: Docker image deploy
+          name: Deploy newest Docker Image
           command: |
             cat ~/inventory.txt
             cd ansible
-            ansible-playbook -i ~/inventory.txt app_dep.yml
+            ansible-playbook -i ~/inventory.txt deploy-app.yml
           no_output_timeout: 2m
 
 workflows:
-  my_workflow:
+  default:
     jobs:
-      - build
-      - docker-upload:
+      - test-build
+      - upload-docker:
           requires:
-            - build
+            - test-build
           filters:
             branches:
-              only: [ main ]
-      - deployment-infra:
+              only: [ master ]
+      - deploy-infrastructure:
           filters:
             branches:
-              only: [ main ]
-      - configure-infra:
+              only: [ master ]
+      - configure-infrastructure:
           requires:
-            - deployment-infra
-      - cluster-configure:
+            - deploy-infrastructure
+      - configure-cluster:
           requires:
-            - docker-upload
-            - configure-infra
-      - docker-deployment:
+            - configure-infrastructure
+            - upload-docker
+      - deploy-docker:
           requires:
-            - cluster-configure
-      
-
+            - configure-cluster

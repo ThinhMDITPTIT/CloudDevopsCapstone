@@ -1,5 +1,5 @@
-- name: "PyApp Deployment"
-  hosts: all
+- name: "Deploy latest app"
+  hosts: management[0]
   user: ubuntu
   gather_facts: false
   become: yes
@@ -7,12 +7,12 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
     CIRCLE_WORKFLOW_ID: "{{ lookup('env', 'CIRCLE_WORKFLOW_ID') }}"
   tasks:
-    - name: Update latest image deployment
+    - name: Update the deployment to run the latest Build
       shell: "./bin/kubectl set image deployments/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=dockertonymd/{{ ENVIRONMENT_NAME }}:{{ CIRCLE_WORKFLOW_ID }}"
       args:
         chdir: $HOME
 
-    - name: Deploy successful status
+    - name: Check if deployment ist successful
       shell: "./bin/kubectl rollout status deployments/{{ ENVIRONMENT_NAME }}-deployment"
       args:
         chdir: $HOME

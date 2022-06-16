@@ -1,6 +1,6 @@
 ---
-- name: "Project lib"
-  hosts: all
+- name: "Install dependencies"
+  hosts: management
   user: ubuntu
   gather_facts: false
   become: yes
@@ -10,12 +10,13 @@
         name: [ "unzip" ]
         state: latest
         update_cache: yes
-  roles:
-    - awscli
-    - kubernetes
 
-- name: "AWS CLI Authentication"
-  hosts: all
+  roles:
+    - install-awscli
+    - install-kubectl
+
+- name: "Authenticate AWS CLI with AWS"
+  hosts: management
   user: ubuntu
   gather_facts: false
   become: yes
@@ -24,15 +25,15 @@
     AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
     AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
   tasks:
-    - name: Configure access_key_id
+    - name: Set the aws_access_key_id
       shell: "aws configure set aws_access_key_id {{ AWS_ACCESS_KEY_ID }}"
-    - name: Configure secret_access_key
+    - name: Set the aws_secret_access_key
       shell: "aws configure set aws_secret_access_key {{ AWS_SECRET_ACCESS_KEY }}"
-    - name: Configure default region
+    - name: Set the default.region
       shell: "aws configure set default.region {{ AWS_DEFAULT_REGION }}"
 
-- name: "Kubectl configuration"
-  hosts: all
+- name: "Fetch kubectl config"
+  hosts: management
   user: ubuntu
   gather_facts: false
   become: yes
@@ -40,5 +41,5 @@
     AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   pre_tasks:
-    - name: Config Kube file cluster
+    - name: Create a kubeconfig file for the cluster
       shell: "aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ ENVIRONMENT_NAME }}-cluster"
