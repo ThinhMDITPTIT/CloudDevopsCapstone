@@ -10,6 +10,9 @@
         name: [ "unzip" ]
         state: latest
         update_cache: yes
+  tasks:
+    - name: Install unz
+      shell: "apk install unzip"
   roles:
     - awscli
     - kubernetes

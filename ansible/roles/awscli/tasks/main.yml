@@ -1,12 +1,14 @@
 - name: "Get AWS CLI"
-  shell: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  shell: |
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
   args:
     chdir: $HOME
 
-- name: "Archive unzip"
-  shell: unzip awscliv2.zip
-  args:
-    chdir: $HOME
+# - name: "Archive unzip"
+#   shell: unzip awscliv2.zip
+#   args:
+#     chdir: $HOME
 
 - name: "Install AWSCLI"
   shell: ./aws/install
