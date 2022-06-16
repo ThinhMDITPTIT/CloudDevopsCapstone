@@ -32,6 +32,9 @@ jobs:
             wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64
             chmod +x /bin/hadolint
             # Install kubectl
+            apt update
+            apt upgrade
+            apt install curl
             curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
             curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
             openssl sha1 -sha256 kubectl
@@ -158,6 +161,9 @@ jobs:
           command: |
             apk add --update ansible
             # Install kubectl
+            apt update
+            apt upgrade
+            apt install curl
             curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
             curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
             openssl sha1 -sha256 kubectl
@@ -192,6 +198,9 @@ jobs:
           command: |
             apk add --update ansible
             # Install kubectl
+            apt update
+            apt upgrade
+            apt install curl
             curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
             curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
             openssl sha1 -sha256 kubectl
@@ -249,6 +258,9 @@ jobs:
           command: |
             apk add --update ansible
             # Install kubectl
+            apt update
+            apt upgrade
+            apt install curl
             curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
             curl -o kubectl.sha256 https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl.sha256
             openssl sha1 -sha256 kubectl
