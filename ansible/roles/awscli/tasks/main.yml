@@ -1,5 +1,5 @@
 - name: "Get AWS CLI"
-  shell: get_url "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  shell: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
   args:
     chdir: $HOME
 
