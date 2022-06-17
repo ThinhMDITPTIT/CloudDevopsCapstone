@@ -5,6 +5,7 @@
   gather_facts: false
   become: yes
   vars:
+    ANSIBLE_HOST_KEY_CHECKING: False
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   pre_tasks:
     - name: "Install 'unzip'"

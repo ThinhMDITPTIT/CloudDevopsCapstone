@@ -4,6 +4,7 @@
   gather_facts: false
   become: yes
   vars:
+    ANSIBLE_HOST_KEY_CHECKING: False
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
     CIRCLE_WORKFLOW_ID: "{{ lookup('env', 'CIRCLE_WORKFLOW_ID') }}"
   roles:
