@@ -8,11 +8,11 @@ Parameters:
     Type: String
 
   MinSize:
-    Description: Min App Servers
+    Description: Min Application's Servers
     Type: Number
 
   MaxSize:
-    Description: Max App Servers
+    Description: Max scale Application's Servers
     Type: Number
 
   DesiredSize:

@@ -5,11 +5,6 @@
   args:
     chdir: $HOME
 
-# - name: "Archive unzip"
-#   shell: unzip awscliv2.zip
-#   args:
-#     chdir: $HOME
-
 - name: "Install AWSCLI"
   shell: ./aws/install
   args:
