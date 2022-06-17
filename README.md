@@ -3,6 +3,9 @@
 # CloudDevopsCapstone
 AWS Cloud Devops Engineer program
 
+The project has followed the instruction from tutorials and examples for the cloud DevOps capstone:
+https://medium.com/@andresaaap/capstone-cloud-devops-nanodegree-4493ab439d48
+
 In this Capstone project, I've applied the skills and knowledge which were developed throughout the Cloud DevOps Nanodegree program to build the application. The project could be devide into steps by steps:
 - Setup AWS configure
 - Use CircleCI to implement CICD for application
