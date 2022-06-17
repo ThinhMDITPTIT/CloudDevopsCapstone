@@ -44,8 +44,8 @@ Resources:
   DirectionServe:
     Type: AWS::EC2::Instance
     Properties:
-      # InstanceType: t2.micro
-      InstanceType: t3.medium
+      InstanceType: t2.micro
+      # InstanceType: t3.medium
       SecurityGroups: 
         - Ref: SecurityGrInstance
       KeyName: !Ref SSHKey

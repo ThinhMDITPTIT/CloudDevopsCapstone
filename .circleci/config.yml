@@ -9,6 +9,8 @@ jobs:
     # Use the same Docker base as the project
       - image: python:3.7.3-stretch
 
+    working_directory: ~/repo
+
     steps:
       - checkout
 
@@ -160,6 +162,8 @@ jobs:
                 cd ansible
                 ansible-playbook -i ~/inventory.txt server_cf.yml
               fi
+          environment:
+            ANSIBLE_HOST_KEY_CHECKING: False
 
   cluster-configure:
     docker:
@@ -187,6 +191,8 @@ jobs:
                 cd ansible
                 ansible-playbook -i ~/inventory.txt cluster_cf.yml
               fi
+          environment:
+            ANSIBLE_HOST_KEY_CHECKING: False
       - run:
           name: LB domain
           command: |
@@ -199,6 +205,8 @@ jobs:
                 echo "Wait 60 seconds..."
                 sleep 60
               fi
+          environment:
+            ANSIBLE_HOST_KEY_CHECKING: False
       - run:
           name: LB DNS
           command: |
@@ -231,6 +239,8 @@ jobs:
             cat ~/inventory.txt
             cd ansible
             ansible-playbook -i ~/inventory.txt app_dep.yml
+          environment:
+            ANSIBLE_HOST_KEY_CHECKING: False
           no_output_timeout: 2m
 
 workflows:

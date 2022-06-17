@@ -1,5 +1,5 @@
 - name: Services configuration trans
-  template:
+  copy:
     src: "{{ ENVIRONMENT_NAME }}-service.yml"
     dest: $HOME
 
